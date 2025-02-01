@@ -65,6 +65,9 @@ footer:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/meirka/canadianmoose"
+    - label: "YouTube"
+      icon: "fab fa-fw fa-youtube"
+      url: "https://youtube.com/cndlos"
 
 defaults:
   # _posts
