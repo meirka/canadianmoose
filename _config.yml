@@ -76,6 +76,8 @@ defaults:
     values:
       layout: single
       author_profile: false
+      show_excerpts: false
+      entries_layout: none
   # _pages
   - scope:
       path: "_pages"
