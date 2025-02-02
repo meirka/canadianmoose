@@ -70,6 +70,9 @@ footer:
     - label: "Chat with us"
       icon: "fab fa-fw fa-telegram"
       url: "https://t.me/rcmpchat"
+    - label: "Telegram Channel"
+      icon: "fab fa-fw fa-telegram"
+      url: "https://t.me/rcmp_podcast"
 
 
 defaults:
