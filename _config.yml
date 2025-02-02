@@ -74,6 +74,9 @@ footer:
       icon: "fab fa-fw fa-telegram"
       url: "https://t.me/rcmp_podcast"
 
+atom_feed:
+  hide: true
+  path: "https://rcmp.me/rss/feed/"
 
 defaults:
   # _posts
