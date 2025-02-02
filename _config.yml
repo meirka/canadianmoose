@@ -67,6 +67,10 @@ footer:
     - label: "YouTube"
       icon: "fab fa-fw fa-youtube"
       url: "https://youtube.com/cndlos"
+    - label: "Chat with us"
+      icon: "fab fa-fw fa-telegram"
+      url: "https://t.me/rcmpchat"
+
 
 defaults:
   # _posts
