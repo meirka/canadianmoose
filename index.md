@@ -1,6 +1,7 @@
 ---
-layout: splash
+layout: single
 permalink: /
+hidden: true
 title: "Home"
 ---
 
