@@ -22,8 +22,5 @@ Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusm
         <option value="$5/month">$5 per Month</option>
     </select>
     
-    <button type="submit" class="btn btn-warning d-flex align-items-center">
-        <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal" class="me-2" style="height: 20px;">
-        Стать инвестором
-    </button>
+    <button type="submit" class="btn btn-warning">Стать инвестором</button>
 </form>
