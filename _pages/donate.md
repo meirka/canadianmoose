@@ -11,17 +11,17 @@ Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusm
 
 [![Support us on Patreon](https://img.shields.io/badge/Support%20Us-Patreon-FF424D?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/rcmp)
 
-
-<form class="widget-donate d-flex align-items-center" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display: flex; gap: 10px; padding: 10px; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); ">
     <input type="hidden" name="cmd" value="_s-xclick">
     <input type="hidden" name="hosted_button_id" value="5YQDFQ9LCLKTU">
 
-    <select class="form-control me-2" name="os0">
+    <select name="os0" style=" padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; ">
         <option value="$25/month">$25 per Month</option>
         <option value="$10/month">$10 per Month</option>
         <option value="$5/month">$5 per Month</option>
     </select>
     
-    <button type="submit" class="btn btn-warning">Стать инвестором</button>
-    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+    <button type="submit" style=" background-color: #ffba00; color: black; font-weight: bold; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; ">
+        💛 Подпишись
+    </button>
 </form>
