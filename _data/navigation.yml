@@ -1,7 +1,5 @@
 main:
   - title: "Donate"
     url: /donate/
-  - title: "About"
-    url: /about/
   - title: "Чат и Правила"
     url: /chat-rules/
