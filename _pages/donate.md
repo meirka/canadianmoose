@@ -23,4 +23,5 @@ Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusm
     </select>
     
     <button type="submit" class="btn btn-warning">Стать инвестором</button>
+    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
 </form>
