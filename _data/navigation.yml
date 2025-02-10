@@ -3,3 +3,5 @@ main:
     url: /donate/
   - title: "Чат и Правила"
     url: /chat-rules/
+  - title: "RPOD.ru"
+    url: /rpod/
