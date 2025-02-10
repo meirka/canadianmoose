@@ -18,7 +18,7 @@ title: "RPOD.ru — 5 лет спустя"
 <br>
 
 # Выпуск 2 — Эмма Гетровна
-<iframe title="Эмма Гетровна - Rpod 5 лет спустя." width="604" height="340" src="https://www.youtube.com/embed/Ky4z01xEe8g?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Ky4z01xEe8g?si=LzjPq3kxE-YoJgh0" title="Эмма Гетровна - Rpod 5 лет спустя." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 <br>
 
