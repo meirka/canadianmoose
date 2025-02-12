@@ -46,28 +46,28 @@ box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
     <a href="https://www.facebook.com/sharer/sharer.php?u=rcmp.cloud" target="_blank" style="
         background-color: #1877F2; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
         font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        🔵 Share on Facebook
+        🔵 Facebook
     </a>
 
     <!-- Twitter -->
     <a href="https://twitter.com/intent/tweet?url=rcmp.cloud&text=Check%20this%20out!" target="_blank" style="
         background-color: #1DA1F2; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
         font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        🐦 Share on Twitter
+        🐦 X
     </a>
 
     <!-- Telegram -->
     <a href="https://t.me/share/url?url=rcmp.cloud&text=Check%20this%20out!" target="_blank" style="
         background-color: #0088cc; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
         font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        📢 Share on Telegram
+        📢 Telegram
     </a>
 
     <!-- WhatsApp -->
     <a href="https://api.whatsapp.com/send?text=Check%20this%20out!%20rcmp.cloud" target="_blank" style="
         background-color: #25D366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
         font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        💬 Share on WhatsApp
+        💬 WhatsApp
     </a>
 </div>
 
