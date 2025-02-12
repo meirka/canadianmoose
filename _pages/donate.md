@@ -1,6 +1,7 @@
 ---
 permalink: /donate/
 title: "Поддержите наш подкаст! "
+share: true
 ---
 
 
@@ -36,6 +37,8 @@ box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
         <option value="$5/month">$5 per Month</option>
     </select>
 </form>
+
+<br>
 
 И конечно распространяйте подкаст в своих соцсетях - засуньте другу в ухо! 
 
