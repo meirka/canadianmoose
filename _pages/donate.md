@@ -41,35 +41,5 @@ box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
 
 И конечно распространяйте подкаст в своих соцсетях - засуньте другу в ухо! 
 
-<div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <!-- Facebook -->
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https://rcmp.cloud" target="_blank" style="
-        background-color: #1877F2; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
-        font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        🔵 Facebook
-    </a>
-
-    <!-- X (formerly Twitter) -->
-    <a href="https://x.com/intent/tweet?url=https://rcmp.cloud&text=Check%20this%20out!" target="_blank" style="
-        background-color: black; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
-        font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        ❌ X
-    </a>
-
-    <!-- Telegram -->
-    <a href="https://t.me/share/url?url=https://rcmp.cloud&text=Check%20this%20out!" target="_blank" style="
-        background-color: #0088cc; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
-        font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        📢 Telegram
-    </a>
-
-    <!-- WhatsApp -->
-    <a href="https://api.whatsapp.com/send?text=Check%20this%20out!%20https://rcmp.cloud" target="_blank" style="
-        background-color: #25D366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;
-        font-size: 16px; font-weight: bold; display: inline-flex; align-items: center;">
-        💬 WhatsApp
-    </a>
-</div>
-
 <br>
 Спасибо за вашу поддержку! ❤️
