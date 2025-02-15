@@ -1,7 +1,5 @@
 main:
-  - title: "Donate"
+  - title: "Ну как там с деньгами?"
     url: /donate/
-  - title: "Чат и Правила"
+  - title: "Пообщаться с нами"
     url: /chat-rules/
-  - title: "RPOD.ru"
-    url: /rpod/
