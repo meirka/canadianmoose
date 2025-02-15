@@ -13,13 +13,11 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Canadian Moose & Co.
+title: Подкаст Канадский Лось & Co.
 logo: "/assets/images/88x88.png"
 email:
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+Подкаст Канадский Лось и компания - про жизнь в Канаде и IT
 twitter_username: username
 github_username: username
 minimal_mistakes_skin: default
