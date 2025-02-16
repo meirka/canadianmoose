@@ -12,16 +12,4 @@ title: "Эфир, Архив & RSS"
 Все подкасты храняться на архивном сервере глубоко в недрах Канады. Если вы хотите послушать старые выпуски то жми [сюда](https://arc.rcmp.me/).  
 
 ## RSS feed
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
-<div class="d-flex flex-column gap-2">
-    <!-- iTunes Link -->
-    <a href="https://podcasts.apple.com/podcast/id363311940" class="btn btn-dark btn-lg d-flex align-items-center">
-        <i class="bi bi-music-note-beamed me-2"></i> iTunes
-    </a>
-
-    <!-- RSS Link -->
-    <a href="https://arc.rcmp.cloud/feed.php" class="btn btn-dark btn-lg d-flex align-items-center">
-        <i class="bi bi-rss me-2"></i> RSS
-    </a>
-</div>
+Подписаться на подкаст можно через [iTunes](https://podcasts.apple.com/podcast/id363311940) или через [RSS](https://arc.rcmp.cloud/feed.php).
