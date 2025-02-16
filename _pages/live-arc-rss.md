@@ -16,12 +16,12 @@ title: "Эфир, Архив & RSS"
 
 <div class="d-flex flex-column gap-2">
     <!-- iTunes Link -->
-    <a href="https://podcasts.apple.com/podcast/id363311940" class="btn btn-light border d-flex align-items-center">
+    <a href="https://podcasts.apple.com/podcast/id363311940" class="btn btn-dark btn-lg d-flex align-items-center">
         <i class="bi bi-music-note-beamed me-2"></i> iTunes
     </a>
 
     <!-- RSS Link -->
-    <a href="https://arc.rcmp.cloud/feed.php" class="btn btn-light border d-flex align-items-center">
+    <a href="https://arc.rcmp.cloud/feed.php" class="btn btn-dark btn-lg d-flex align-items-center">
         <i class="bi bi-rss me-2"></i> RSS
     </a>
 </div>
