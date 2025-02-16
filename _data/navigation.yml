@@ -3,3 +3,5 @@ main:
     url: /donate/
   - title: "Пообщаться с нами"
     url: /chat-rules/
+  - title: "Эфир, Архив & RSS"
+    url: /live-arc-rss/
