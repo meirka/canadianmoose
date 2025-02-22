@@ -1,5 +1,5 @@
 ---
-permalink: /live-arc-rss/
+permalink: /listen/
 title: "Послушать нас"
 ---
 Наш бубнеж можно услышать в прямом эфире можно ориентировочно в пятницу в 15:00 по Торонто на <a href="https://www.youtube.com/@cndlos"  target="_blank">YouTube</a> или по ссылке [здесь](https://stream.rcmp.cloud/stream)

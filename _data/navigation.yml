@@ -1,6 +1,6 @@
 main:
   - title: "Послушать"
-    url: /live-arc-rss/
+    url: /listen/
   - title: "Пообщаться"
     url: /chat-rules/
   - title: "Дать денег"
