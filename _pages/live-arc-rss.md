@@ -1,15 +1,15 @@
 ---
 permalink: /live-arc-rss/
-title: "Эфир, Архив & RSS"
+title: "Послушать нас"
 ---
+Наш бубнеж можно услышать в прямом эфире можно ориентировочно в пятницу в 15:00 по Торонто на <a href="https://www.youtube.com/@cndlos"  target="_blank">YouTube</a> или по ссылке [здесь](https://stream.rcmp.cloud/stream)
 
-Время записи плавает! Ориентировочно в пятницу в 15:00 по Торонто, но мы не стесняемся опаздывать. Подпишитесь на [наш телеграм канал](https://t.me/rcmp_podcast) для оперативных апдейтов. Если трансляция активна — автоматически появится аудио плеер.
+Если лень кликать по ссылке, то жми кнопку плеера: 
 
 <audio style="width: 100%;" autoplay="autoplay" controls="controls"><source src="https://stream.rcmp.cloud/stream" type="audio/mpeg" />Твой брузер не поддерживает &#8212; так что иди <a href="https://stream.rcmp.cloud/stream" target="_blank" rel="noopener noreferrer">сюда</a></audio>
 
 ## Архив
 
-Все подкасты храняться на архивном сервере глубоко в недрах Канады. Если вы хотите послушать старые выпуски то жми [сюда](https://arc.rcmp.me/).  
+Если Вам вдруг захотелось [послушать полный список выпусков](https://arc.rcmp.cloud/), то придется иметь дело с нашим CDN-серврером, запущенным на картошке, которая растет в огороде у ведущих подкаста. 
+ 
 
-## RSS feed
-Подписаться на подкаст можно через [iTunes](https://podcasts.apple.com/podcast/id363311940) или через [RSS](https://arc.rcmp.cloud/feed.php).

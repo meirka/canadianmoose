@@ -8,6 +8,9 @@ title: "Канадский Лось и Со."
 <iframe allow="autoplay *; encrypted-media *; fullscreen *" frameborder="0" height="450" style="width:100%;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" src="https://embed.podcasts.apple.com/podcast/id363311940"></iframe>
 <hr>
 
+## Добавить в плеер 
+Подписаться на подкаст можно через [iTunes](https://podcasts.apple.com/podcast/id363311940) или добавить [RSS](https://arc.rcmp.cloud/feed.php) напрямую. Но если хочется альтернативных площадок, то полный список можно <a href="https://podcast.ru/363311940" target="_blank">увидеть здесь</a>
+
 # О подкасте
 
 Канадский Лось и компания - широко известный в узких кругах подкаст, который выходит с 2007 года.  Ведущие подкаста часто говорят, что это шоу про "АйТи™, жизнь в Канаде и многое другое". Но фактически мы просто любим собираться раз в неделю, чтобы поскрипеть стулями в микрофон и обсудить что интересного было на неделе. Лучше всего он подойдет тем, кто просто любит послушать фоном бубнеж айтишников про их суровую(нет) жизнь.

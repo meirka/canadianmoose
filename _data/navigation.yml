@@ -1,7 +1,9 @@
 main:
-  - title: "Ну как там с деньгами?"
-    url: /donate/
-  - title: "Пообщаться с нами"
-    url: /chat-rules/
-  - title: "Эфир, Архив & RSS"
+  - title: "Послушать"
     url: /live-arc-rss/
+  - title: "Пообщаться"
+    url: /chat-rules/
+  - title: "Дать денег"
+    url: /donate/
+
+
