@@ -74,6 +74,9 @@ footer:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/meirka/canadianmoose"
+    - label: "RSS"
+      icon: "fas fa-fw fa-rss"
+      url: "https://feed.rcmp.cloud/"
 
 atom_feed:
   hide: true
