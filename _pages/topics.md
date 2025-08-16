@@ -1,12 +1,12 @@
 ---
-title: "Community Topics"
+title: "Осудить"
 permalink: /topics/
 layout: single
 classes: wide
-description: "Post a topic as a top-level comment. Upvote with 👍. Discuss in replies."
+description: "Post a topic as a top-level comment. Upvote with 👍."
 ---
 
-**How it works:** Post your idea as a **top-level comment** below. Others **upvote with 👍** on that comment and reply to discuss.
+**Как это работает:** публикуйте тему для обсуждения — если есть ссылка, добавьте её. Голосуем 👍, чтобы решить, что обсудим в подкасте в первую очередь.
 
 <div id="giscus"></div>
 
