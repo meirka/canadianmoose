@@ -21,7 +21,7 @@ description: "Post a topic as a top-level comment. Upvote with 👍. Discuss in 
         data-reactions-enabled="1"
         data-emit-metadata="0"
         data-input-position="bottom"
-        data-theme="light"
+        data-theme="https://rcmp.cloud/assets/css/giscus-no-reply.css"
         data-lang="en"
         data-reactions-enabled="0"
         crossorigin="anonymous"

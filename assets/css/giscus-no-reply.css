@@ -1,0 +1,16 @@
+/* Base: pull in giscus' stock theme */
+@import url("https://giscus.app/themes/preferred_color_scheme.css");
+
+/* 1) Hide the main “Write a comment” box */
+.gsc-comment-box { display: none !important; }
+
+/* 2) Hide per-comment reply boxes (if they appear) */
+.gsc-reply-box { display: none !important; }
+
+/* 3) Hide visible reply/action triggers (keep 👍 reactions visible) */
+.gsc-comment-actions button[aria-label^="Reply"],
+.gsc-comment-actions a[aria-label^="Reply"],
+.gsc-replies-toggle { display: none !important; }
+
+/* (Optional) tighten spacing left by the editor */
+.gsc-comment-box-separator { display: none !important; }
