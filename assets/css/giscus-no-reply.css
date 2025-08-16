@@ -10,6 +10,7 @@
 .gsc-comment-actions a[aria-label^="Reply"],
 .gsc-comment-actions button[aria-label^="Quote reply"],
 .gsc-comment-replies-count,
+.gsc-left-header,
 .gsc-comment-actions a[aria-label^="Quote reply"] {
     display: none !important;
 }
