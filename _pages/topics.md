@@ -2,7 +2,7 @@
 title: "Community Topics"
 permalink: /topics/
 layout: single
-classes: wide
+#classes: wide
 description: "Propose topics and vote with 👍 — powered by GitHub Issues."
 ---
 
