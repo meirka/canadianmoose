@@ -1,5 +1,5 @@
 ---
-title: "Community Topics"
+title: "Осудить"
 permalink: /topics/
 layout: single
 classes: wide
