@@ -1,0 +1,17 @@
+name: "New discussion topic"
+description: "Propose a topic for rcmp.cloud"
+title: "[Topic] <clear, concise title>"
+labels: ["topic"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: One-liner
+      placeholder: "What’s the essence of the topic?"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Why it matters / details
+      placeholder: "Context, links, goals…"
