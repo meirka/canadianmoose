@@ -2,7 +2,6 @@ name: "New discussion topic"
 description: "Propose a topic for rcmp.cloud"
 title: "[Topic] <clear, concise title>"
 labels: ["topic"]
-blank_issues_enabled: false
 body:
   - type: input
     id: summary
