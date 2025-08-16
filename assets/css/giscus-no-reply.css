@@ -1,16 +1,17 @@
-/* Base: pull in giscus' stock theme */
-@import url("https://giscus.app/themes/preferred_color_scheme.css");
+/* Base giscus light theme */
+@import url("https://giscus.app/themes/light.css");
 
-/* 1) Hide the main “Write a comment” box */
-.gsc-comment-box { display: none !important; }
+/* Hide reply UI (but keep the main composer visible) */
+.gsc-reply-box { display: none !important; }                 /* inline reply editors */
+.gsc-replies-toggle { display: none !important; }            /* “View X replies” expanders */
 
-/* 2) Hide per-comment reply boxes (if they appear) */
-.gsc-reply-box { display: none !important; }
-
-/* 3) Hide visible reply/action triggers (keep 👍 reactions visible) */
+/* Hide “Reply” / “Quote reply” triggers under each comment */
 .gsc-comment-actions button[aria-label^="Reply"],
 .gsc-comment-actions a[aria-label^="Reply"],
-.gsc-replies-toggle { display: none !important; }
+.gsc-comment-actions button[aria-label^="Quote reply"],
+.gsc-comment-actions a[aria-label^="Quote reply"] {
+    display: none !important;
+}
 
-/* (Optional) tighten spacing left by the editor */
+/* (Optional) tighten leftover spacing */
 .gsc-comment-box-separator { display: none !important; }
