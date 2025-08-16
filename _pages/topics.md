@@ -23,6 +23,7 @@ description: "Post a topic as a top-level comment. Upvote with 👍. Discuss in 
         data-input-position="bottom"
         data-theme="light"
         data-lang="en"
+        data-reactions-enabled="0"
         crossorigin="anonymous"
         async>
 </script>
