@@ -93,12 +93,9 @@ jobs:
             const author = c.author?.login ? '@' + c.author.login : 'Someone';
 
             const text = [
-              '🆕 New Topic',
-              '• ' + firstLine,
-              excerpt ? '• ' + excerpt : null,
-              '',
-              'By ' + author,
-              'Open: ' + commentUrl
+              '🆕 Новое обсудить: ' + firstLine,
+              excerpt ? ('🧩 ' + excerpt) : null,
+              '🗳️ Не проходи мимо — голосуй 👉 ' + commentUrl
             ].filter(Boolean).join('\n');
 
             // Send to Telegram
