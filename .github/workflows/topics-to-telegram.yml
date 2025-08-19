@@ -21,7 +21,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // github, context, core, fetch are pre-injected by github-script (Node 20).
+            // github, context, core, fetch are provided by github-script (Node 20).
 
             if (context.eventName === 'workflow_dispatch') {
               core.info('Manual run - nothing to do.'); return;
@@ -32,13 +32,16 @@ jobs:
 
             const discussionNumber = context.payload.discussion?.number;
             const commentUrl = context.payload.comment?.html_url;
-            if (!discussionNumber || !commentUrl) {
-              core.info('Missing discussion/comment info; skipping.'); return;
+            const commentNodeId = context.payload.comment?.node_id;
+
+            if (!discussionNumber || !commentUrl || !commentNodeId) {
+              core.info('Missing discussion/comment info (need number, html_url, node_id); skipping.');
+              return;
             }
 
-            // Build GraphQL (no backticks needed)
+            // GraphQL: get discussion category + the comment (via node(id:))
             const q = [
-              'query($owner:String!, $repo:String!, $number:Int!, $resourceUrl:URI!) {',
+              'query($owner:String!, $repo:String!, $number:Int!, $commentId:ID!) {',
               '  repository(owner:$owner, name:$repo) {',
               '    discussion(number:$number) {',
               '      title',
@@ -46,7 +49,7 @@ jobs:
               '      category { name id }',
               '    }',
               '  }',
-              '  resource(url:$resourceUrl) {',
+              '  node(id:$commentId) {',
               '    __typename',
               '    ... on DiscussionComment {',
               '      id',
@@ -63,12 +66,13 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               number: discussionNumber,
-              resourceUrl: commentUrl   // <-- renamed here
+              commentId: commentNodeId
             };
 
             const data = await github.graphql(q, vars);
             const disc = data?.repository?.discussion;
-            const c = data?.resource;
+            const c = data?.node;
+
             if (!disc || c?.__typename !== 'DiscussionComment') {
               core.info('Not a discussion comment; skipping.'); return;
             }
