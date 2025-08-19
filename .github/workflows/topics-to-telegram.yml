@@ -19,23 +19,23 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { context, github, core } = require('@actions/github');
+            // NOTE: github, context, core, and fetch are injected by github-script (Node 20).
+            // Do NOT re-declare or require them.
 
-            // Only react to brand-new comments
-            if (context.payload.action !== 'created') return;
+            if (context.payload.action !== 'created') {
+              core.info('Not a create action; skipping.');
+              return;
+            }
 
-            // Grab basic fields
-            const repoOwner = context.repo.owner;
-            const repoName  = context.repo.repo;
             const discussionNumber = context.payload.discussion?.number;
             const commentUrl = context.payload.comment?.html_url;
 
             if (!discussionNumber || !commentUrl) {
-              core.info('Missing discussion/comment info, skipping.');
+              core.info('Missing discussion/comment info; skipping.');
               return;
             }
 
-            // 1) Resolve: Is this a top-level comment? Which category is the discussion in?
+            // Pull discussion category and the comment (and whether it's a reply)
             const q = `
               query($owner:String!, $repo:String!, $number:Int!, $url:URI!) {
                 repository(owner:$owner, name:$repo) {
@@ -52,48 +52,51 @@ jobs:
                     body
                     createdAt
                     author { login url }
-                    replyTo { id }   # null means top-level
+                    replyTo { id }   # null => top-level
                   }
                 }
               }`;
+
             const data = await github.graphql(q, {
-              owner: repoOwner, repo: repoName, number: discussionNumber, url: commentUrl
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              number: discussionNumber,
+              url: commentUrl
             });
 
             const disc = data.repository?.discussion;
             const c = data.resource;
+
             if (!disc || c?.__typename !== 'DiscussionComment') {
-              core.info('Not a discussion comment, skip.');
+              core.info('Not a discussion comment; skipping.');
               return;
             }
 
-            // Filter: only your "Topics" board (by category name) AND top-level comments
-            const isTopicsCategory = (disc.category?.name || '').toLowerCase() === 'topics';
+            // Only top-level comments in the "Topics" category
+            const isTopics = (disc.category?.name || '').toLowerCase() === 'topics';
             const isTopLevel = !c.replyTo;
-            if (!isTopicsCategory || !isTopLevel) {
-              core.info('Not a top-level comment in Topics category. Skipping.');
+            if (!isTopics || !isTopLevel) {
+              core.info('Not a top-level comment in Topics; skipping.');
               return;
             }
 
-            // 2) Build a short, clean message for Telegram
+            // Build a concise Telegram message
             const author = c.author?.login ? `@${c.author.login}` : 'Someone';
-            const firstLine = (c.body || '').split('\n').map(s => s.trim()).filter(Boolean)[0] || '(no title)';
-            const excerpt = (c.body || '').replace(/\r/g,'').split('\n').slice(1).join(' ').trim();
-            const short = excerpt.length > 240 ? excerpt.slice(0,237) + '…' : excerpt;
+            const linesRaw = (c.body || '').split('\n').map(s => s.trim()).filter(Boolean);
+            const firstLine = linesRaw[0] || '(no title)';
+            const rest = linesRaw.slice(1).join(' ');
+            const excerpt = rest.length > 240 ? rest.slice(0, 237) + '…' : rest;
 
-            const lines = [
+            const text = [
               '🆕 New Topic',
               `• ${firstLine}`,
-              short ? `• ${short}` : null,
+              excerpt ? `• ${excerpt}` : null,
               '',
               `By ${author}`,
               `Open: ${commentUrl}`
-            ].filter(Boolean);
+            ].filter(Boolean).join('\n');
 
-            const text = lines.join('\n');
-
-            // 3) Send to Telegram
-            const fetch = require('node-fetch');
+            // Send to Telegram
             const resp = await fetch(`https://api.telegram.org/bot${process.env.TG_TOKEN}/sendMessage`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -101,11 +104,3 @@ jobs:
                 chat_id: process.env.TG_CHAT,
                 text,
                 disable_web_page_preview: true
-              })
-            });
-            if (!resp.ok) {
-              const t = await resp.text();
-              core.setFailed(`Telegram send failed: ${resp.status} ${t}`);
-              return;
-            }
-            core.info('Sent to Telegram ✅');
