@@ -1,0 +1,111 @@
+name: Notify Telegram on new Topic
+
+on:
+  discussion_comment:
+    types: [created]
+
+permissions:
+  discussions: read
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT:  ${{ secrets.TELEGRAM_CHAT_ID }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { context, github, core } = require('@actions/github');
+
+            // Only react to brand-new comments
+            if (context.payload.action !== 'created') return;
+
+            // Grab basic fields
+            const repoOwner = context.repo.owner;
+            const repoName  = context.repo.repo;
+            const discussionNumber = context.payload.discussion?.number;
+            const commentUrl = context.payload.comment?.html_url;
+
+            if (!discussionNumber || !commentUrl) {
+              core.info('Missing discussion/comment info, skipping.');
+              return;
+            }
+
+            // 1) Resolve: Is this a top-level comment? Which category is the discussion in?
+            const q = `
+              query($owner:String!, $repo:String!, $number:Int!, $url:URI!) {
+                repository(owner:$owner, name:$repo) {
+                  discussion(number:$number) {
+                    title
+                    url
+                    category { name id }
+                  }
+                }
+                resource(url:$url) {
+                  __typename
+                  ... on DiscussionComment {
+                    id
+                    body
+                    createdAt
+                    author { login url }
+                    replyTo { id }   # null means top-level
+                  }
+                }
+              }`;
+            const data = await github.graphql(q, {
+              owner: repoOwner, repo: repoName, number: discussionNumber, url: commentUrl
+            });
+
+            const disc = data.repository?.discussion;
+            const c = data.resource;
+            if (!disc || c?.__typename !== 'DiscussionComment') {
+              core.info('Not a discussion comment, skip.');
+              return;
+            }
+
+            // Filter: only your "Topics" board (by category name) AND top-level comments
+            const isTopicsCategory = (disc.category?.name || '').toLowerCase() === 'topics';
+            const isTopLevel = !c.replyTo;
+            if (!isTopicsCategory || !isTopLevel) {
+              core.info('Not a top-level comment in Topics category. Skipping.');
+              return;
+            }
+
+            // 2) Build a short, clean message for Telegram
+            const author = c.author?.login ? `@${c.author.login}` : 'Someone';
+            const firstLine = (c.body || '').split('\n').map(s => s.trim()).filter(Boolean)[0] || '(no title)';
+            const excerpt = (c.body || '').replace(/\r/g,'').split('\n').slice(1).join(' ').trim();
+            const short = excerpt.length > 240 ? excerpt.slice(0,237) + '…' : excerpt;
+
+            const lines = [
+              '🆕 New Topic',
+              `• ${firstLine}`,
+              short ? `• ${short}` : null,
+              '',
+              `By ${author}`,
+              `Open: ${commentUrl}`
+            ].filter(Boolean);
+
+            const text = lines.join('\n');
+
+            // 3) Send to Telegram
+            const fetch = require('node-fetch');
+            const resp = await fetch(`https://api.telegram.org/bot${process.env.TG_TOKEN}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: process.env.TG_CHAT,
+                text,
+                disable_web_page_preview: true
+              })
+            });
+            if (!resp.ok) {
+              const t = await resp.text();
+              core.setFailed(`Telegram send failed: ${resp.status} ${t}`);
+              return;
+            }
+            core.info('Sent to Telegram ✅');
