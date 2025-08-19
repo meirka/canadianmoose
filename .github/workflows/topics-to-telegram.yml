@@ -3,7 +3,7 @@ name: Notify Telegram on new Topic
 on:
   discussion_comment:
     types: [created]
-  workflow_dispatch: {}   # lets you test-run manually
+  workflow_dispatch: {}   # optional: lets you test manually
 
 permissions:
   discussions: read
@@ -21,30 +21,24 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // NOTE: github, context, core, fetch are injected by github-script (Node 20).
+            // github, context, core, fetch are pre-injected by github-script (Node 20).
 
-            // If this was a manual run (workflow_dispatch), do nothing gracefully.
-            if (!context.payload || !context.eventName || (context.eventName === 'workflow_dispatch')) {
-              core.info('Manual run - nothing to do.');
-              return;
+            if (context.eventName === 'workflow_dispatch') {
+              core.info('Manual run - nothing to do.'); return;
             }
-
             if (context.payload.action !== 'created') {
-              core.info('Not a create action; skipping.');
-              return;
+              core.info('Not a create action; skipping.'); return;
             }
 
-            const discussionNumber = context.payload.discussion && context.payload.discussion.number;
-            const commentUrl = context.payload.comment && context.payload.comment.html_url;
-
+            const discussionNumber = context.payload.discussion?.number;
+            const commentUrl = context.payload.comment?.html_url;
             if (!discussionNumber || !commentUrl) {
-              core.info('Missing discussion/comment info; skipping.');
-              return;
+              core.info('Missing discussion/comment info; skipping.'); return;
             }
 
-            // --- Build GraphQL query strings without backticks (avoid YAML/backtick issues)
-            const qLines = [
-              'query($owner:String!, $repo:String!, $number:Int!, $url:URI!) {',
+            // Build GraphQL (no backticks needed)
+            const q = [
+              'query($owner:String!, $repo:String!, $number:Int!, $resourceUrl:URI!) {',
               '  repository(owner:$owner, name:$repo) {',
               '    discussion(number:$number) {',
               '      title',
@@ -52,7 +46,7 @@ jobs:
               '      category { name id }',
               '    }',
               '  }',
-              '  resource(url:$url) {',
+              '  resource(url:$resourceUrl) {',
               '    __typename',
               '    ... on DiscussionComment {',
               '      id',
@@ -63,53 +57,45 @@ jobs:
               '    }',
               '  }',
               '}'
-            ];
-            const q = qLines.join('\n');
+            ].join('\n');
 
             const vars = {
               owner: context.repo.owner,
               repo: context.repo.repo,
               number: discussionNumber,
-              url: commentUrl
+              resourceUrl: commentUrl   // <-- renamed here
             };
 
             const data = await github.graphql(q, vars);
-
-            const disc = data && data.repository && data.repository.discussion;
-            const c = data && data.resource;
-
-            if (!disc || !c || c.__typename !== 'DiscussionComment') {
-              core.info('Not a discussion comment; skipping.');
-              return;
+            const disc = data?.repository?.discussion;
+            const c = data?.resource;
+            if (!disc || c?.__typename !== 'DiscussionComment') {
+              core.info('Not a discussion comment; skipping.'); return;
             }
 
             // Only top-level comments in the "Topics" category
-            const isTopics = (disc.category && disc.category.name ? disc.category.name : '').toLowerCase() === 'topics';
+            const isTopics = (disc.category?.name || '').toLowerCase() === 'topics';
             const isTopLevel = !(c.replyTo && c.replyTo.id);
             if (!isTopics || !isTopLevel) {
-              core.info('Not a top-level comment in Topics; skipping.');
-              return;
+              core.info('Not a top-level comment in Topics; skipping.'); return;
             }
 
-            // Build concise Telegram message
+            // Format message
             const body = c.body || '';
-            const linesRaw = body.split('\n').map(s => s.trim()).filter(Boolean);
-            const firstLine = linesRaw.length ? linesRaw[0] : '(no title)';
-            const restJoined = linesRaw.slice(1).join(' ');
-            const excerpt = restJoined.length > 240 ? (restJoined.slice(0, 237) + '…') : restJoined;
+            const lines = body.split('\n').map(s => s.trim()).filter(Boolean);
+            const firstLine = lines[0] || '(no title)';
+            const rest = lines.slice(1).join(' ');
+            const excerpt = rest.length > 240 ? rest.slice(0, 237) + '…' : rest;
+            const author = c.author?.login ? '@' + c.author.login : 'Someone';
 
-            const author = (c.author && c.author.login) ? ('@' + c.author.login) : 'Someone';
-
-            const msgLines = [
+            const text = [
               '🆕 New Topic',
               '• ' + firstLine,
-              excerpt ? ('• ' + excerpt) : null,
+              excerpt ? '• ' + excerpt : null,
               '',
               'By ' + author,
               'Open: ' + commentUrl
-            ].filter(Boolean);
-
-            const text = msgLines.join('\n');
+            ].filter(Boolean).join('\n');
 
             // Send to Telegram
             const resp = await fetch('https://api.telegram.org/bot' + process.env.TG_TOKEN + '/sendMessage', {
@@ -117,7 +103,7 @@ jobs:
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 chat_id: process.env.TG_CHAT,
-                text: text,
+                text,
                 disable_web_page_preview: true
               })
             });
@@ -127,5 +113,4 @@ jobs:
               core.setFailed('Telegram send failed: ' + resp.status + ' ' + errTxt);
               return;
             }
-
             core.info('Sent to Telegram ✅');
