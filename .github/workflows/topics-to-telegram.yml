@@ -93,9 +93,9 @@ jobs:
             const author = c.author?.login ? '@' + c.author.login : 'Someone';
 
             const text = [
-              '🆕 Новое обсудить: ' + firstLine,
+              '👉 Добавлена новая тема для обсуждения' + firstLine,
               excerpt ? ('🧩 ' + excerpt) : null,
-              '🗳️ Не проходи мимо — голосуй 👉 ' + 'https://rcmp.cloud/topics/'
+              'Список всех тем здесь:' + 'https://rcmp.cloud/topics/'
             ].filter(Boolean).join('\n');
 
             // Send to Telegram
