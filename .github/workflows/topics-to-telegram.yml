@@ -93,10 +93,9 @@ jobs:
             const author = c.author?.login ? '@' + c.author.login : 'Someone';
 
             const text = [
-              'Добавлена новая тема для обсуждения' + firstLine,
+              'Добавлена новая тема для обсуждения\n' + firstLine,
               excerpt ? ('📝 ' + excerpt) : null,
-              '
-              Список всех тем здесь:' + 'https://rcmp.cloud/topics/'
+              '\nСписок всех тем здесь: ' + 'https://rcmp.cloud/topics/'
             ].filter(Boolean).join('\n');
 
             // Send to Telegram
