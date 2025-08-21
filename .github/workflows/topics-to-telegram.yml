@@ -114,7 +114,7 @@ jobs:
               body: JSON.stringify({
                 chat_id: process.env.TG_CHAT,
                 text: safeText,
-                parseMode: 'Markdown',
+                parseMode: 'MarkdownV2',
                 webPreview: true
               })
             });
