@@ -23,11 +23,6 @@ jobs:
           script: |
             // github, context, core, fetch are provided by github-script (Node 20).
 
-            // ---------- helper: escape for Telegram MarkdownV2 ----------
-            const tgEscape = (str = '') =>
-              str.replace(/[_*[\]()~`>#+\-=|{}.!]/g, ch => '\\' + ch);
-
-            // ---------- early-exit guards ----------
             if (context.eventName === 'workflow_dispatch') {
               core.info('Manual run - nothing to do.'); return;
             }
@@ -44,77 +39,72 @@ jobs:
               return;
             }
 
-            // ---------- GraphQL: get discussion + comment ----------
-            const q = `
-              query ($owner:String!, $repo:String!, $number:Int!, $commentId:ID!) {
-                repository(owner:$owner, name:$repo) {
-                  discussion(number:$number) {
-                    title
-                    url
-                    category { name }
-                  }
-                }
-                node(id:$commentId) {
-                  __typename
-                  ... on DiscussionComment {
-                    id
-                    body
-                    createdAt
-                    author { login }
-                    replyTo { id }
-                  }
-                }
-              }`;
+            // GraphQL: get discussion category + the comment (via node(id:))
+            const q = [
+              'query($owner:String!, $repo:String!, $number:Int!, $commentId:ID!) {',
+              '  repository(owner:$owner, name:$repo) {',
+              '    discussion(number:$number) {',
+              '      title',
+              '      url',
+              '      category { name id }',
+              '    }',
+              '  }',
+              '  node(id:$commentId) {',
+              '    __typename',
+              '    ... on DiscussionComment {',
+              '      id',
+              '      body',
+              '      createdAt',
+              '      author { login url }',
+              '      replyTo { id }',
+              '    }',
+              '  }',
+              '}'
+            ].join('\n');
 
             const vars = {
               owner: context.repo.owner,
-              repo:  context.repo.repo,
+              repo: context.repo.repo,
               number: discussionNumber,
               commentId: commentNodeId
             };
 
             const data = await github.graphql(q, vars);
             const disc = data?.repository?.discussion;
-            const c    = data?.node;
+            const c = data?.node;
 
             if (!disc || c?.__typename !== 'DiscussionComment') {
               core.info('Not a discussion comment; skipping.'); return;
             }
 
-            // ---------- only top-level comments in “Topics” ----------
-            const isTopics   = (disc.category?.name || '').toLowerCase() === 'topics';
+            // Only top-level comments in the "Topics" category
+            const isTopics = (disc.category?.name || '').toLowerCase() === 'topics';
             const isTopLevel = !(c.replyTo && c.replyTo.id);
             if (!isTopics || !isTopLevel) {
               core.info('Not a top-level comment in Topics; skipping.'); return;
             }
 
-            // ---------- build human-readable message ----------
-            const body  = c.body || '';
+            // Format message
+            const body = c.body || '';
             const lines = body.split('\n').map(s => s.trim()).filter(Boolean);
             const firstLine = lines[0] || '(no title)';
-            const rest      = lines.slice(1).join(' ');
-            const excerpt   = rest.length > 240 ? rest.slice(0, 237) + '…' : rest;
-
+            const rest = lines.slice(1).join(' ');
+            const excerpt = rest.length > 240 ? rest.slice(0, 237) + '…' : rest;
             const author = c.author?.login ? '@' + c.author.login : 'Someone';
 
-            const rawText = [
-              'Добавлена новая тема для обсуждения',
-              firstLine,
+            const text = [
+              'Добавлена новая тема для обсуждения\n' + firstLine,
               excerpt ? ('📝 ' + excerpt) : null,
-              '\nСписок всех тем здесь: https://rcmp.cloud/topics/'
+              '\nСписок всех тем здесь: ' + 'https://rcmp.cloud/topics/'
             ].filter(Boolean).join('\n');
 
-            // ---------- escape for Telegram MarkdownV2 ----------
-            const safeText = tgEscape(rawText);
-
-            // ---------- send ----------
-            const resp = await fetch(`https://api.telegram.org/bot${process.env.TG_TOKEN}/sendMessage`, {
+            // Send to Telegram
+            const resp = await fetch('https://api.telegram.org/bot' + process.env.TG_TOKEN + '/sendMessage', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 chat_id: process.env.TG_CHAT,
-                text: safeText,
-                parse_mode: 'MarkdownV2',
+                text,
                 disable_web_page_preview: true
               })
             });
