@@ -154,8 +154,8 @@ jobs:
             
             // Compose (put the link you want previewed LAST)
             const parts = [
-            '🆕 ' + firstHTML + '\n',
-            excerptHTML ? ('🧩 ' + excerptHTML) : null,
+            '🆕 ' + firstHTML,
+            excerptHTML ? ('\n🧩 ' + excerptHTML) : null,
             '\n📋 <a href="https://rcmp.cloud/topics/">все темы</a>'
             ].filter(Boolean);
               
