@@ -110,10 +110,11 @@ jobs:
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              chat_id: process.env.TG_CHAT),
+              chat_id: process.env.TG_CHAT,
               text: text.slice(0, 4096),   // Telegram max length
               parse_mode: 'MarkdownV2',
-              disable_web_page_preview: false })
+              disable_web_page_preview: false 
+              })
             });
               
             if (!resp.ok) {
