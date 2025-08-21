@@ -86,10 +86,10 @@ jobs:
 
             // Minimal GitHub-Markdown → Telegram-HTML converter
             // Allowed Telegram tags: b,strong,i,em,u,ins,s,del,strike,a,code,pre,blockquote,br
-              function escText(t) {
+            function escText(t) {
               return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
             }
-              function escAttr(t) {
+            function escAttr(t) {
               return String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
             }
             function mdToTgHtml(md) {
@@ -102,13 +102,13 @@ jobs:
               return `<pre><code>${escText(withoutLang)}</code></pre>`;
               });
             
-              // Headings #... → <b>...</b>\n
+              // Headings -> <b>…</b>
               s = s.replace(/^#{1,6}\s*(.+)$/gm, (_, t) => `<b>${escText(t.trim())}</b>\n`);
             
-              // Blockquotes > ...
+              // Blockquotes
               s = s.replace(/^>\s?(.*)$/gm, (_, t) => `<blockquote>${escText(t)}</blockquote>`);
             
-              // Images ![alt](url) → "alt (url)"
+              // Images ![alt](url) -> "alt (url)"
               s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g, (_, alt, url) =>
               `${escText(alt || 'image')} (${escText(url)})`
               );
@@ -118,26 +118,24 @@ jobs:
               `<a href="${escAttr(url)}">${escText(txt)}</a>`
               );
             
-              // Inline code `code`
+              // Inline code
               s = s.replace(/`([^`\n]+)`/g, (_, code) => `<code>${escText(code)}</code>`);
             
-              // Bold **text** / __text__
+              // Bold / Italic
               s = s.replace(/(\*\*|__)(.*?)\1/g, (_, __, t) => `<b>${escText(t)}</b>`);
-            
-              // Italic *text* / _text_ (avoid bold sequences)
               s = s.replace(/(^|[^\*])\*(?!\*)([^*\n]+)\*(?!\*)/g, (_, pre, t) => `${pre}<i>${escText(t)}</i>`);
               s = s.replace(/(^|[^_])_([^_\n]+)_/g,        (_, pre, t) => `${pre}<i>${escText(t)}</i>`);
             
-              // Lists - item / * item → • item
+              // Lists -> bullets
               s = s.replace(/^(\s*)[-*+]\s+(.+)$/gm, (_, sp, t) => `${sp}• ${escText(t)}`);
             
-              // Horizontal rule → line break
+              // Horizontal rule -> break
               s = s.replace(/^\s*---+\s*$/gm, '<br>');
             
               // Collapse big gaps
               s = s.replace(/\n{3,}/g, '\n\n');
             
-            // Final safety: strip any tag that’s not in Telegram’s allowlist
+              // Strip non-allowed tags
               s = s.replace(/<(?!\/?(?:b|strong|i|em|u|ins|s|del|strike|a|code|pre|blockquote|br)\b)[^>]*>/gi, '');
             
               return s.trim();
@@ -154,7 +152,7 @@ jobs:
             const firstHTML = mdToTgHtml(firstLine);
             const excerptHTML = mdToTgHtml(excerpt);
             
-            // Compose (vote link LAST so its preview shows)
+            // Compose (put the link you want previewed LAST)
             const parts = [
             '🆕 Новое обсудить: ' + firstHTML,
             excerptHTML ? ('🧩 ' + excerptHTML) : null,
@@ -181,4 +179,3 @@ jobs:
               return;
             }
             core.info('Sent to Telegram ✅');
-            # --- end replacement ---
