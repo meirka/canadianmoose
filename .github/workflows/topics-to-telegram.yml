@@ -84,36 +84,94 @@ jobs:
               core.info('Not a top-level comment in Topics; skipping.'); return;
             }
 
-            // Telegram MarkdownV2 escaping (required)
-            function escapeMdv2(text) {
-              return String(text).replace(/([_*\[\]()~`>#+\-=\|{}.!\\])/g, '\\$1');
+            // Minimal GitHub-Markdown → Telegram-HTML converter
+            // Allowed Telegram tags: b,strong,i,em,u,ins,s,del,strike,a,code,pre,blockquote,br
+              function escText(t) {
+              return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
             }
-              function escapeMdv2Url(url) {
-              // Escape parentheses and backslashes inside link URLs
-              return String(url).replace(/([()\\])/g, '\\$1');
+              function escAttr(t) {
+              return String(t).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            }
+            function mdToTgHtml(md) {
+              if (!md) return '';
+              let s = String(md).replace(/\r\n?/g, '\n');
+            
+              // Fenced code blocks ```lang\n...\n```
+              s = s.replace(/```([\s\S]*?)```/g, (_, block) => {
+              const withoutLang = block.replace(/^[a-zA-Z0-9_-]+\n/, '');
+              return `<pre><code>${escText(withoutLang)}</code></pre>`;
+              });
+            
+              // Headings #... → <b>...</b>\n
+              s = s.replace(/^#{1,6}\s*(.+)$/gm, (_, t) => `<b>${escText(t.trim())}</b>\n`);
+            
+              // Blockquotes > ...
+              s = s.replace(/^>\s?(.*)$/gm, (_, t) => `<blockquote>${escText(t)}</blockquote>`);
+            
+              // Images ![alt](url) → "alt (url)"
+              s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g, (_, alt, url) =>
+              `${escText(alt || 'image')} (${escText(url)})`
+              );
+            
+              // Links [text](url)
+              s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, (_, txt, url) =>
+              `<a href="${escAttr(url)}">${escText(txt)}</a>`
+              );
+            
+              // Inline code `code`
+              s = s.replace(/`([^`\n]+)`/g, (_, code) => `<code>${escText(code)}</code>`);
+            
+              // Bold **text** / __text__
+              s = s.replace(/(\*\*|__)(.*?)\1/g, (_, __, t) => `<b>${escText(t)}</b>`);
+            
+              // Italic *text* / _text_ (avoid bold sequences)
+              s = s.replace(/(^|[^\*])\*(?!\*)([^*\n]+)\*(?!\*)/g, (_, pre, t) => `${pre}<i>${escText(t)}</i>`);
+              s = s.replace(/(^|[^_])_([^_\n]+)_/g,        (_, pre, t) => `${pre}<i>${escText(t)}</i>`);
+            
+              // Lists - item / * item → • item
+              s = s.replace(/^(\s*)[-*+]\s+(.+)$/gm, (_, sp, t) => `${sp}• ${escText(t)}`);
+            
+              // Horizontal rule → line break
+              s = s.replace(/^\s*---+\s*$/gm, '<br>');
+            
+              // Collapse big gaps
+              s = s.replace(/\n{3,}/g, '\n\n');
+            
+            // Final safety: strip any tag that’s not in Telegram’s allowlist
+              s = s.replace(/<(?!\/?(?:b|strong|i|em|u|ins|s|del|strike|a|code|pre|blockquote|br)\b)[^>]*>/gi, '');
+            
+              return s.trim();
             }
               
-            // Build message
+            // Build message parts
             const body = c.body || '';
             const lines = body.split('\n').map(s => s.trim()).filter(Boolean);
-            const firstLine = lines[0] || '(no title)';
+            const firstLine = lines[0] || '(без названия)';
             const rest = lines.slice(1).join(' ');
             const excerpt = rest.length > 240 ? rest.slice(0, 237) + '…' : rest;
-            
-            const line1 = '🆕 Добавлена новая тема для обсуждения:\n ' + escapeMdv2(firstLine);
-            const line2 = excerpt ? ('📝 ' + escapeMdv2(excerpt)) : null;
-            const line3 = '\nСписок всех тем здесь: ' + `[все темы](https://rcmp.cloud/topics/)`;
-            const text = [line1, line2, line3].join('\n');            
               
-            // Send to Telegram with MarkdownV2
+            // Convert to Telegram-HTML
+            const firstHTML = mdToTgHtml(firstLine);
+            const excerptHTML = mdToTgHtml(excerpt);
+            
+            // Compose (vote link LAST so its preview shows)
+            const parts = [
+            '🆕 Новое обсудить: ' + firstHTML,
+            excerptHTML ? ('🧩 ' + excerptHTML) : null,
+            '\n📋 <a href="https://rcmp.cloud/topics/">все темы</a>'
+            ].filter(Boolean);
+              
+            const text = parts.join('\n');
+              
+            // Send with HTML parse mode (previews ON)
             const resp = await fetch('https://api.telegram.org/bot' + process.env.TG_TOKEN + '/sendMessage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               chat_id: process.env.TG_CHAT,
-              text: text.slice(0, 4096),   // Telegram max length
-              parse_mode: 'MarkdownV2',
-              disable_web_page_preview: false 
+              text: text.slice(0, 4096),   // Telegram limit
+              parse_mode: 'HTML',
+              disable_web_page_preview: false
               })
             });
               
@@ -123,3 +181,4 @@ jobs:
               return;
             }
             core.info('Sent to Telegram ✅');
+            # --- end replacement ---
