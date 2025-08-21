@@ -84,31 +84,38 @@ jobs:
               core.info('Not a top-level comment in Topics; skipping.'); return;
             }
 
-            // Format message
+            // Telegram MarkdownV2 escaping (required)
+            function escapeMdv2(text) {
+              return String(text).replace(/([_*\[\]()~`>#+\-=\|{}.!\\])/g, '\\$1');
+            }
+              function escapeMdv2Url(url) {
+              // Escape parentheses and backslashes inside link URLs
+              return String(url).replace(/([()\\])/g, '\\$1');
+            }
+              
+            // Build message
             const body = c.body || '';
             const lines = body.split('\n').map(s => s.trim()).filter(Boolean);
             const firstLine = lines[0] || '(no title)';
             const rest = lines.slice(1).join(' ');
             const excerpt = rest.length > 240 ? rest.slice(0, 237) + '…' : rest;
-            const author = c.author?.login ? '@' + c.author.login : 'Someone';
-
-            const text = [
-              'Добавлена новая тема для обсуждения\n' + firstLine,
-              excerpt ? ('📝 ' + excerpt) : null,
-              '\nСписок всех тем здесь: ' + 'https://rcmp.cloud/topics/'
-            ].filter(Boolean).join('\n');
-
-            // Send to Telegram
+            
+            const line1 = '🆕 Добавлена новая тема для обсуждения:\n ' + escapeMdv2(firstLine);
+            const line2 = excerpt ? ('📝 ' + escapeMdv2(excerpt)) : null,
+            const line3 = '\nСписок всех тем здесь: ' + `[все темы](https://rcmp.cloud/topics/)`;
+            const text = [line1, line2, line3].join('\n');            
+              
+            // Send to Telegram with MarkdownV2
             const resp = await fetch('https://api.telegram.org/bot' + process.env.TG_TOKEN + '/sendMessage', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                chat_id: process.env.TG_CHAT,
-                text,
-                disable_web_page_preview: true
-              })
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: process.env.TG_CHAT),
+              text: text.slice(0, 4096),   // Telegram max length
+              parse_mode: 'MarkdownV2',
+              disable_web_page_preview: false })
             });
-
+              
             if (!resp.ok) {
               const errTxt = await resp.text();
               core.setFailed('Telegram send failed: ' + resp.status + ' ' + errTxt);
