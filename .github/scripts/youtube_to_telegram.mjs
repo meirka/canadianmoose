@@ -15,7 +15,7 @@ const STATE_DIR  = ".github/state";
 const STATE_FILE = path.join(STATE_DIR, "last_video_id.txt");
 
 // Safety: limit how many backlog items to post in one run
-const MAX_POSTS = 5; // tweak to taste
+const MAX_POSTS = 100; // tweak to taste
 
 // ----- small utilities -----
 function ensureStateDir() {
