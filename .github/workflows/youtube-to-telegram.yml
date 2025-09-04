@@ -1,0 +1,41 @@
+name: YouTube → Telegram (Node, zero-deps)
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # every 5 minutes
+  workflow_dispatch:         # manual runs allowed
+
+permissions:
+  contents: write            # commit state file
+
+concurrency:
+  group: yt-to-telegram
+  cancel-in-progress: true
+
+jobs:
+  poll-and-post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 20 is already on the runner, but this pins/version-locks cleanly
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run notifier
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+        run: node .github/scripts/youtube_to_telegram.mjs
+
+      - name: Commit last seen video ID (if changed)
+        run: |
+          if [ -n "$(git status --porcelain .github/state/last_video_id.txt)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/state/last_video_id.txt
+            git commit -m "Update last seen YouTube video"
+            git push
+          fi
