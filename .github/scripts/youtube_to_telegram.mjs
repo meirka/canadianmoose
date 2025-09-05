@@ -131,7 +131,11 @@ async function main() {
         // Uncomment to skip Shorts:
         // if (link.includes("/shorts/")) continue;
 
-        await postToTelegram(title, link);
+        let url = link;
+        if (url.includes("/shorts/")) {
+            url = `https://www.youtube.com/watch?v=${vid}`;
+        }
+        await postToTelegram(title, url);
         writeLastId(vid);
     }
 }
