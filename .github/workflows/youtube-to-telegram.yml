@@ -2,7 +2,7 @@ name: YouTube → Telegram (Node, zero-deps)
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "*/20 * * * *"
   workflow_dispatch:         # manual runs allowed
 
 permissions:
