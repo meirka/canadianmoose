@@ -2,7 +2,7 @@
 layout: single
 permalink: /
 hidden: true
-title: "Канадский Лось и Со."
+title: "Канадский Лось и Ко."
 ---
 
 <iframe allow="autoplay *; encrypted-media *; fullscreen *" frameborder="0" height="450" style="width:100%;" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation-by-user-activation" src="https://embed.podcasts.apple.com/podcast/id363311940"></iframe>
