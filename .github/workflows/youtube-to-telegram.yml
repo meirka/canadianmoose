@@ -2,7 +2,9 @@ name: YouTube → Telegram (Node, zero-deps)
 
 on:
   schedule:
-    - cron: "*/20 * * * *"
+    - cron: "*/20 5-22 * * *"
+      timezone: "America/Toronto"
+
   workflow_dispatch:         # manual runs allowed
 
 permissions:
@@ -18,7 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node 20 is already on the runner, but this pins/version-locks cleanly
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
