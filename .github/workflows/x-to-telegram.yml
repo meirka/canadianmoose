@@ -13,6 +13,7 @@ permissions:
 concurrency:
   group: telegram-state-writers
   queue: max
+  cancel-in-progress: false
 
 jobs:
   poll-and-post:
@@ -20,6 +21,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # Resolve the branch after waiting for the shared state-writer queue.
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:

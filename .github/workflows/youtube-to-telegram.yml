@@ -11,14 +11,18 @@ permissions:
   contents: write            # commit state file
 
 concurrency:
-  group: yt-to-telegram
-  cancel-in-progress: true
+  group: telegram-state-writers
+  queue: max
+  cancel-in-progress: false
 
 jobs:
   poll-and-post:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Resolve the branch after waiting for the shared state-writer queue.
+          ref: ${{ github.ref }}
 
       - uses: actions/setup-node@v7
         with:
