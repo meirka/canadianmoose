@@ -1,0 +1,100 @@
+name: X → Telegram (free, Nitter)
+
+on:
+  schedule:
+    - cron: "17 5-21 * * *"
+      timezone: "America/Toronto"
+
+  workflow_dispatch:         # manual runs allowed
+
+permissions:
+  contents: write            # commit state file
+
+concurrency:
+  group: telegram-state-writers
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  poll-and-post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # Resolve the branch after waiting for the shared state-writer queue.
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+
+      - name: Start local Nitter
+        env:
+          NITTER_SESSION_KIND: ${{ vars.NITTER_SESSION_KIND }}
+          NITTER_SESSION_USERNAME: ${{ vars.NITTER_SESSION_USERNAME }}
+          NITTER_SESSION_AUTH_TOKEN: ${{ secrets.NITTER_SESSION_AUTH_TOKEN }}
+          NITTER_SESSION_CT0: ${{ secrets.NITTER_SESSION_CT0 }}
+        run: |
+          for variable_name in \
+            NITTER_SESSION_KIND \
+            NITTER_SESSION_USERNAME \
+            NITTER_SESSION_AUTH_TOKEN \
+            NITTER_SESSION_CT0
+          do
+            if [ -z "${!variable_name}" ]; then
+              echo "Missing GitHub Actions value: $variable_name" >&2
+              exit 1
+            fi
+          done
+
+          sessions_file="$RUNNER_TEMP/nitter-sessions.jsonl"
+          jq --compact-output --null-input \
+            '{
+              kind: env.NITTER_SESSION_KIND,
+              username: env.NITTER_SESSION_USERNAME,
+              authToken: env.NITTER_SESSION_AUTH_TOKEN,
+              ct0: env.NITTER_SESSION_CT0
+            }' > "$sessions_file"
+          chmod 644 "$sessions_file"
+          test -s "$sessions_file"
+
+          docker network create x-to-telegram
+          docker run --detach --name nitter-redis --network x-to-telegram \
+            valkey/valkey:8-alpine@sha256:e0eb7c480958d32bdc4357a74bdd70653ae15f2f9b4c93c4a5a9fad1dc471c84 valkey-server --save "" --appendonly no
+          docker create --name nitter --network x-to-telegram \
+            --workdir /src \
+            --publish 127.0.0.1:8080:8080 \
+            --volume "$GITHUB_WORKSPACE/.github/nitter/nitter.conf:/src/nitter.conf:ro" \
+            zedeus/nitter@sha256:7e068545ab504a480daaa866a3178b0d2c1df0acfe98064f1adbbdd346db33aa
+          docker cp "$sessions_file" nitter:/src/sessions.jsonl
+          docker start nitter
+
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8080/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+
+          docker logs nitter
+          exit 1
+
+      - name: Run notifier
+        env:
+          X_USERNAME: ${{ vars.X_USERNAME }}
+          NITTER_RSS: http://127.0.0.1:8080/cndlos/rss
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node .github/scripts/x_to_telegram.mjs
+
+      - name: Commit last seen post ID (if changed)
+        run: |
+          if [ -n "$(git status --porcelain .github/state/last_tweet_id.txt)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/state/last_tweet_id.txt
+            git commit -m "Update last seen X post"
+            git pull --rebase
+            git push
+          fi
